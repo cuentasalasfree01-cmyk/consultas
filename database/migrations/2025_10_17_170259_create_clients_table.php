@@ -9,18 +9,15 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('surname');
-            $table->date('birthdate');
-            $table->string('country');
-            $table->string('id_type');
-            $table->string('id_number');
-            $table->string('email')->nullable();
+            $table->string('email')->unique();
             $table->string('phone')->nullable();
+            $table->text('address')->nullable();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

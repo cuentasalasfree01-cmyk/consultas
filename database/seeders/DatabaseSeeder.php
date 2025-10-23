@@ -24,5 +24,6 @@ class DatabaseSeeder extends Seeder
 
         $this->call(UserDemoSeeder::class);
         $this->call(CustomFieldsSeeder::class);
+        $this->call(RoleSeeder::class);
     }
 }

@@ -2,197 +2,64 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Client;
-use App\Models\CustomField;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class ClientController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
-        if (Auth::user()->hasRole('admin')) {
-            $clients = Client::all();
-        } else {
-            $clients = Client::where('user_id', Auth::id())->get();
-        }
-        return view('clients.index', compact('clients'));
+        // Por ahora solo retornamos texto simple
+        return "Lista de clientes - Próximamente";
     }
 
+    /**
+     * Show the form for creating a new resource.
+     */
     public function create()
     {
-        $customFields = CustomField::all();
-        return view('clients.create', compact('customFields'));
+        return "Crear cliente - Próximamente";
     }
 
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
-        // Validación campos fijos
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'surname' => 'required|string|max:255',
-            'birthdate' => 'required|date',
-            'country' => 'required|string|max:255',
-            'id_type' => 'required|string|max:50',
-            'id_number' => 'required',
-            'email' => 'nullable|email',
-            'phone' => 'nullable|string|max:30'
-            // otros campos fijos si quieres incluirlos
-        ]);
-        Client::create($data);
-        return redirect()->route('clients.index')->with('status', 'Cliente creado');
-
-
-        // Validación dinámica campos personalizados
-        $customFields = CustomField::all();
-        foreach ($customFields as $field) {
-            $key = "custom_fields.{$field->id}";
-            $rules = [];
-
-            if ($field->required) {
-                $rules[] = 'required';
-            } else {
-                $rules[] = 'nullable';
-            }
-
-            switch ($field->type) {
-                case 'text':
-                    $rules[] = 'string';
-                    break;
-                case 'number':
-                    $rules[] = 'numeric';
-                    break;
-                case 'date':
-                    $rules[] = 'date';
-                    break;
-                case 'select':
-                    $options = $field->options ?? [];
-                    $rules[] = 'in:' . implode(',', $options);
-                    break;
-            }
-            $request->validate([
-                $key => $rules,
-            ]);
-        }
-
-        // Crear cliente con campos fijos
-        $client = Client::create($request->only([
-            'name',
-            'email',
-            'phone',
-            'company',
-            'notes',
-            'user_id'
-        ]));
-
-        // Guardar campos personalizados
-        $customFieldsData = $request->input('custom_fields', []);
-        foreach ($customFieldsData as $fieldId => $value) {
-            if ($value !== null) {
-                $client->customFieldValues()->create([
-                    'custom_field_id' => $fieldId,
-                    'value' => $value,
-                ]);
-            }
-        }
-
-        return redirect()->route('clients.index')->with('success', 'Cliente creado correctamente');
+        return redirect()->route('clients.index');
     }
 
-    // Métodos restantes: show, edit, update, destroy
-    public function show(Client $client)
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
     {
-        return view('clients.show', compact('client'));
+        return "Ver cliente $id - Próximamente";
     }
 
-    public function edit(Client $client)
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
     {
-        $customFields = CustomField::all()->map(function ($field) use ($client) {
-            $field->value = $client->customFieldValues()
-                ->where('custom_field_id', $field->id)
-                ->value('value');
-            return $field;
-        });
-
-        return view('clients.edit', compact('client', 'customFields'));
+        return "Editar cliente $id - Próximamente";
     }
 
-    public function update(Request $request, Client $client)
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
     {
-        // Aquí puedes replicar validaciones de store y actualizar datos
-        // Actualizando campos fijos
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email',
-            'phone' => 'nullable|string',
-            'company' => 'nullable|string',
-            'notes' => 'nullable|string',
-            'user_id' => 'required|exists:users,id',
-        ]);
-
-        // Validación dinámica campos personalizados igual que en store
-        $customFields = CustomField::all();
-        foreach ($customFields as $field) {
-            $key = "custom_fields.{$field->id}";
-            $rules = [];
-
-            if ($field->required) {
-                $rules[] = 'required';
-            } else {
-                $rules[] = 'nullable';
-            }
-
-            switch ($field->type) {
-                case 'text':
-                    $rules[] = 'string';
-                    break;
-                case 'number':
-                    $rules[] = 'numeric';
-                    break;
-                case 'date':
-                    $rules[] = 'date';
-                    break;
-                case 'select':
-                    $options = $field->options ?? [];
-                    $rules[] = 'in:' . implode(',', $options);
-                    break;
-            }
-            $request->validate([
-                $key => $rules,
-            ]);
-        }
-
-        $client->update($request->only([
-            'name',
-            'email',
-            'phone',
-            'company',
-            'notes',
-            'user_id'
-        ]));
-
-        // Actualizar campos personalizados
-        $customFieldsData = $request->input('custom_fields', []);
-        foreach ($customFieldsData as $fieldId => $value) {
-            $fieldValue = $client->customFieldValues()->where('custom_field_id', $fieldId)->first();
-            if ($fieldValue) {
-                // Actualizar
-                $fieldValue->update(['value' => $value]);
-            } else {
-                // Crear nuevo
-                $client->customFieldValues()->create([
-                    'custom_field_id' => $fieldId,
-                    'value' => $value,
-                ]);
-            }
-        }
-
-        return redirect()->route('clients.index')->with('success', 'Cliente actualizado exitosamente');
+        return redirect()->route('clients.index');
     }
 
-    public function destroy(Client $client)
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
     {
-        $client->delete();
-        return redirect()->route('clients.index')->with('success', 'Cliente eliminado exitosamente');
+        return redirect()->route('clients.index');
     }
 }
