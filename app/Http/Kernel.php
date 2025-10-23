@@ -32,12 +32,10 @@ class Kernel extends HttpKernel
     ];
 
     protected $routeMiddleware = [
-        // Spatie/laravel-permission
-        // 'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
-        // 'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
-        // 'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
-        // Estándar de Laravel
         // 'auth' => \App\Http\Middleware\Authenticate::class,
+        'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+        'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+        'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,

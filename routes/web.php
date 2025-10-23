@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CustomFieldController;
+use App\Http\Controllers\ProcedureController;
 
 
 // Ruta pública de bienvenida
@@ -33,6 +34,7 @@ Route::middleware('auth')->group(function () {
 // Rutas solo para el administrador
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('clients', ClientController::class);
+    Route::resource('procedures', ProcedureController::class);
     // Agrega aquí otras rutas solo para administradores
 });
 
