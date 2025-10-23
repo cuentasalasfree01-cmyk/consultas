@@ -5,12 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\Client;
 use App\Models\CustomField;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ClientController extends Controller
 {
     public function index()
     {
-        $clients = Client::all();
+        if (Auth::user()->hasRole('admin')) {
+            $clients = Client::all();
+        } else {
+            $clients = Client::where('user_id', Auth::id())->get();
+        }
         return view('clients.index', compact('clients'));
     }
 
